@@ -19,8 +19,8 @@ jobs:
       # This should be dispatched on the actual PR branch
       - uses: actions/checkout@v3
 
-      - if: ${{ JSON.parse(inputs.comment).body.includes('!test') }}
+      - if: ${{ fromJSON(inputs.comment).body.includes('!test') }}
         name: Run tests
         run: |
-          echo "Running tests for PR #${{ JSON.parse(inputs.issue).number }}"
+          echo "Running tests for PR #${{ fromJSON(inputs.issue).number }}"
 
