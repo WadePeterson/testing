@@ -27,16 +27,19 @@ jobs:
 
       - name: Check trigger in script
         uses: actions/github-script@v7
+        env:
+          COMMENT: ${{ inputs.comment }}
+          ISSUE: ${{ inputs.issue }}
         with:
           script: |
-            const commentBody = JSON.parse(inputs.comment).body;
-            const issueNumber = JSON.parse(inputs.issue).number;
+            const comment = JSON.parse(process.env.COMMENT);
+            const issue = JSON.parse(process.env.ISSUE);
 
-            if (commentBody.includes('!deploy')) {
-              console.log(`Deploying PR #${issueNumber}`);
-            } else if (commentBody.includes('!test')) {
-              console.log(`Testing PR #${issueNumber}`);
+            if (comment.body.includes('!deploy')) {
+              console.log(`Deploying PR #${issue.number}`);
+            } else if (comment.body.includes('!test')) {
+              console.log(`Testing PR #${issue.number}`);
             } else {
-              console.log(`No recognized command in comment for PR #${issueNumber}`);
+              console.log(`No recognized command in comment for PR #${issue.number}`);
             }
 
