@@ -2,6 +2,10 @@ name: "On Issue Comment"
 on:
   issue_comment:
     types: [created]
+
+permissions:
+  actions: write # Required to dispatch workflows
+  contents: read # Default required for checkout
     
 jobs:
   check-pr-comment:
