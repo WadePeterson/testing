@@ -4,17 +4,32 @@ on:
     types: [created]
     
 jobs:
-  pr-comment:
+  check-pr-comment:
     if: ${{ github.event.issue.pull_request && github.event.issue.state == 'open' }}
     runs-on: ubuntu-latest
+    outputs:
+      comment: ${{ steps.set-output.outputs.comment }}
+      issue: ${{ steps.set-output.outputs.issue }}
+      repository: ${{ steps.set-output.outputs.repository }}
+      sender: ${{ steps.set-output.outputs.sender }}
     steps:
-      - name: Print event
+      - name: Trigger workflow
+        id: set-output
         uses: actions/github-script@v7
         with:
           script: |
-            console.log(JSON.stringify(context, null, 2));
-            
-      - name: Checkout pull request
-        uses: actions/checkout@v4
-        with:
-          ref: refs/pull/${{ github.event.issue.number }}/head
+            const prRef = `refs/pull/${context.payload.issue.number}/merge`;
+            await github.rest.actions.createWorkflowDispatch({
+              workflow_id: 'on-pr-comment.yaml',
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: prRef,
+              inputs: {
+                comment: context.payload.comment,
+                issue: context.payload.issue,
+                repository: context.payload.repository,
+                sender: context.payload.sender
+              },
+            })
+  
+

@@ -1,0 +1,33 @@
+name: "On PR Comment"
+on:
+  workflow_dispatch:
+    inputs:
+      comment:
+        required: true
+        type: string
+      issue:
+        required: true
+        type: string
+      repository:
+        required: true
+        type: string
+      sender:
+        required: true
+        type: string
+
+jobs:
+  pr-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print comment
+        run: |
+          echo "Comment: ${{ inputs.comment }}"
+      - name: Print issue
+        run: |
+          echo "Issue: ${{ inputs.issue }}"
+      - name: Print repository
+        run: |
+          echo "Repository: ${{ inputs.repository }}"
+      - name: Print sender
+        run: |
+          echo "Sender: ${{ inputs.sender }}"
