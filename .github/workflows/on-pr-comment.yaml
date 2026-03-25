@@ -1,3 +1,5 @@
+# This workflow is designed to be triggered from the on-issue-comment.yaml workflow
+# This workflow should run on the head ref of the PR the comment was posted on
 name: "On PR Comment"
 
 on: 
@@ -16,11 +18,14 @@ jobs:
   pr-comment:
     runs-on: ubuntu-latest
     steps:
-      # This should be dispatched on the actual PR branch
       - uses: actions/checkout@v3
-
-      - if: ${{ fromJSON(inputs.comment).body.includes('!test') }}
-        name: Run tests
-        run: |
-          echo "Running tests for PR #${{ fromJSON(inputs.issue).number }}"
+      - name: Print inputs
+        uses: actions/github-script@v7
+        env:
+          COMMENT: ${{ github.event.inputs.comment }}
+          ISSUE: ${{ github.event.inputs.issue }}
+        with:          
+          script: |
+            console.log('Comment:', JSON.parse(process.env.COMMENT, null, 2));
+            console.log('Issue:', JSON.parse(process.env.ISSUE, null, 2));
 
