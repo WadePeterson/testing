@@ -8,12 +8,6 @@ on:
       issue:
         required: true
         type: string
-      repository:
-        required: true
-        type: string
-      sender:
-        required: true
-        type: string
 
 jobs:
   pr-comment:
