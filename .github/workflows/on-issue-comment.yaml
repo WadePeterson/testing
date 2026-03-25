@@ -1,0 +1,11 @@
+name: "On Issue Comment"
+on:
+  issue_comment:
+    types: [created]
+    
+jobs:
+  on-issue-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print payload
+        run: echo "${{ toJson(github.event) }}"
