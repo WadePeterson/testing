@@ -1,29 +1,14 @@
 name: "On PR Comment"
-on:
+
+on: 
   workflow_dispatch:
     inputs:
-      pr-number:
+      comment:
+        description: 'JSON string of the comment payload from the issue_comment event'
         required: true
         type: string
-      pr-ref:
-        required: true
-        type: string
-      pr-head-ref:
-        required: true
-        type: string
-      comment-id:
-        required: true
-        type: string
-      comment-body:
-        required: true
-        type: string
-      comment-url:
-        required: true
-        type: string
-      sender-login:
-        required: true
-        type: string
-      issue-author-login:
+      issue:
+        description: 'JSON string of the issue payload from the issue_comment event'
         required: true
         type: string
 
@@ -31,6 +16,11 @@ jobs:
   pr-comment:
     runs-on: ubuntu-latest
     steps:
-      - name: Print input
+      # This should be dispatched on the actual PR branch
+      - uses: actions/checkout@v3
+
+      - if: ${{ JSON.parse(inputs.comment).body.includes('!test') }}
+        name: Run tests
         run: |
-          echo "Inputs: ${{ toJson(inputs) }}"
+          echo "Running tests for PR #${{ JSON.parse(inputs.issue).number }}"
+

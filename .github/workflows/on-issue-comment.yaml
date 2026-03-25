@@ -4,21 +4,15 @@ on:
     types: [created]
 
 permissions:
-  actions: write # Required to dispatch workflows
-  contents: read # Default required for checkout
-    
+  actions: write
+  contents: read
+
 jobs:
   check-pr-comment:
     if: ${{ github.event.issue.pull_request && github.event.issue.state == 'open' }}
     runs-on: ubuntu-latest
-    outputs:
-      comment: ${{ steps.set-output.outputs.comment }}
-      issue: ${{ steps.set-output.outputs.issue }}
-      repository: ${{ steps.set-output.outputs.repository }}
-      sender: ${{ steps.set-output.outputs.sender }}
     steps:
       - name: Trigger workflow
-        id: set-output
         uses: actions/github-script@v7
         with:
           script: |
@@ -38,15 +32,7 @@ jobs:
               repo: context.repo.repo,
               ref: prHeadRef,
               inputs: {
-                'pr-number': `${prNumber}`,
-                'pr-ref': prRef,
-                'pr-head-ref': prHeadRef,
-                'comment-id': `${context.payload.comment.id}`,
-                'comment-body': context.payload.comment.body || '',
-                'comment-url': context.payload.comment.html_url || '',
-                'sender-login': context.payload.sender.login,
-                'issue-author-login': context.payload.issue.user.login,
+                comment: JSON.stringify(context.payload.comment),
+                issue: JSON.stringify(context.payload.issue),
               },
             })
-  
-
