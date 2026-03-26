@@ -19,13 +19,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Print inputs
+
+      - name: Simple trigger
+        if: ${{ contains(fromJSON(inputs.comment).body, '!test') }}
+        run: |
+          echo "Running tests for PR #${{ fromJSON(inputs.issue).number }}"
+
+      - name: Check trigger in script
         uses: actions/github-script@v7
         env:
-          COMMENT: ${{ github.event.inputs.comment }}
-          ISSUE: ${{ github.event.inputs.issue }}
-        with:          
+          COMMENT: ${{ inputs.comment }}
+          ISSUE: ${{ inputs.issue }}
+        with:
           script: |
-            console.log('Comment:', JSON.parse(process.env.COMMENT, null, 2));
-            console.log('Issue:', JSON.parse(process.env.ISSUE, null, 2));
+            const comment = JSON.parse(process.env.COMMENT);
+            const issue = JSON.parse(process.env.ISSUE);
+
+            if (comment.body.includes('!deploy')) {
+              console.log(`Deploying PR #${issue.number}`);
+            } else if (comment.body.includes('!test')) {
+              console.log(`Testing PR #${issue.number}`);
+            } else {
+              console.log(`No recognized command in comment for PR #${issue.number}`);
+            }
 
